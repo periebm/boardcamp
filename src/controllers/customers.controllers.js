@@ -85,7 +85,7 @@ export async function updateCustomer(req, res) {
             [name, phone, cpf, birthday, id]
         )
 
-        res.sendStatus(201);
+        res.sendStatus(200);
 
     } catch (err) {
         res.status(500).send(err.message);
