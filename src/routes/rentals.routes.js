@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { completeRent, deleteRent, getRents, insertRent } from "../controllers/rentals.controllers";
+import { completeRent, deleteRent, getRents, insertRent } from "../controllers/rentals.controllers.js";
 
 const rentalsRouter = Router();
 
