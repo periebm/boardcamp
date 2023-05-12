@@ -15,7 +15,6 @@ export async function getGames(req, res){
 export async function insertGame(req, res){
     const {name, image, stockTotal, pricePerDay} = req.body;
 
-
     try {
         const user = await db.query(
             'SELECT * FROM games WHERE name = $1;',
