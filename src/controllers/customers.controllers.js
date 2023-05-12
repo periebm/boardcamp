@@ -23,8 +23,7 @@ export async function getCustomersId(req, res){
         )
 
         if(!customer.rows.length) return res.sendStatus(404);
-        
-        res.send(customer.rows)
+        res.send(customer.rows[0])
     } catch (err) {
         res.status(500).send(err.message);
     }
@@ -40,12 +39,12 @@ export async function insertCustomer(req, res){
             [cpf]
         )
 
-        if(user.rowCount) return res.sendStatus(409);
+         if(user.rowCount) return res.sendStatus(409);
 
-          await db.query(
+        await db.query(
             'INSERT INTO customers (name,phone, cpf, birthday) VALUES ($1, $2, $3, $4);',
             [name,phone, cpf, birthday]
-        ); 
+        )
         res.sendStatus(201);
     } catch (err) {
         res.status(500).send(err.message);
@@ -54,9 +53,11 @@ export async function insertCustomer(req, res){
 
 
 export async function updateCustomer(req, res){
+    const {id} = req.params
+    const {name, phone, cpf, birthday} = req.body;
 
     try {
-        
+        const user = await db.query()
     } catch (err) {
         res.status(500).send(err.message);
     }
