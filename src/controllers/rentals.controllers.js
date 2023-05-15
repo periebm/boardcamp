@@ -13,18 +13,22 @@ export async function getRents(req, res) {
                     ON rentals."gameId" = games.id;
             `
         )
-        
-        rentals.rows.map((e) => (
-            e.rentDate = new Date(e.rentDate).toISOString().split('T')[0],
+
+        rentals.rows.map((e) => {
+            if (e.returnDate !== null) e.returnDate = new Date(e.returnDate).toISOString().split('T')[0]
+
+
+            e.rentDate = new Date(e.rentDate).toISOString().split('T')[0];
             e.customer = {
-                id: e.customerId, name: e.customerName
-            },
+                  id: e.customerId, name: e.customerName
+              };
             e.game = {
                 id: e.gameId, name: e.gameName
-            },
-            delete e.gameName,
-            delete e.customerName 
-        ))
+             };
+            delete e.gameName;
+            delete e.customerName;
+
+        })
 
         res.send(rentals.rows)
     } catch (err) {
@@ -86,17 +90,17 @@ export async function completeRent(req, res) {
         if (rental.rows[0].returnDate !== null) return res.sendStatus(400);
 
         const returnedDate = new Date();
-        const daysLate = (Math.abs( returnedDate - rental.rows[0].rentDate))/(1000 * 3600 * 24);
+        const daysLate = (Math.abs(returnedDate - rental.rows[0].rentDate)) / (1000 * 3600 * 24);
         let fee = daysLate * rental.rows[0].originalPrice;
 
-        if(daysLate < 1) fee = null;
+        if (daysLate < 1) fee = null;
 
         await db.query(
             `UPDATE rentals 
             SET "returnDate" = $1,"delayFee" = $2 
             WHERE id = $3`,
             [returnedDate, fee, id]
-        )  
+        )
         res.sendStatus(200);
     } catch (err) {
         res.status(500).send(err.message);
