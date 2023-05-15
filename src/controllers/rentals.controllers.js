@@ -73,9 +73,31 @@ export async function insertRent(req, res) {
 
 
 export async function completeRent(req, res) {
+    const { id } = req.params;
 
     try {
+        const rental = await db.query(
+            'SELECT * FROM rentals WHERE id = $1;', [id]
+        )
 
+        console.log(rental.rows[0])
+
+        if (!rental.rows.length) return res.sendStatus(404);
+        if (rental.rows[0].returnDate !== null) return res.sendStatus(400);
+
+        const returnedDate = new Date();
+        const daysLate = (Math.abs( returnedDate - rental.rows[0].rentDate))/(1000 * 3600 * 24);
+        let fee = daysLate * rental.rows[0].originalPrice;
+
+        if(daysLate < 1) fee = null;
+
+        await db.query(
+            `UPDATE rentals 
+            SET "returnDate" = $1,"delayFee" = $2 
+            WHERE id = $3`,
+            [returnedDate, fee, id]
+        )  
+        res.sendStatus(200);
     } catch (err) {
         res.status(500).send(err.message);
     }
