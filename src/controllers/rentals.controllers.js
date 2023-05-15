@@ -91,7 +91,7 @@ export async function completeRent(req, res) {
         const daysLate = (Math.abs(returnedDate - rental.rows[0].rentDate)) / (1000 * 3600 * 24);
         let fee = daysLate * rental.rows[0].originalPrice;
 
-        if(daysLate < 1) {
+        if(fee < rental.rows[0].originalPrice) {
             fee = 0;
         }
     
