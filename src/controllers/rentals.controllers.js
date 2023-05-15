@@ -94,9 +94,7 @@ export async function completeRent(req, res) {
         if (daysLate < 1) fee = null;
 
         await db.query(
-            `UPDATE rentals 
-            SET "returnDate" = $1,"delayFee" = $2 
-            WHERE id = $3;`,
+            'UPDATE rentals SET "returnDate" = $1,"delayFee" = $2 WHERE id = $3;',
             [returnedDate, fee, id]
         )
         res.sendStatus(200);
@@ -117,7 +115,7 @@ export async function deleteRent(req, res) {
         if (rental.rows[0].returnDate === null) return res.sendStatus(400);
         
         await db.query(
-            `DELETE FROM rentals WHERE id = $1;`
+            'DELETE FROM rentals WHERE id = $1;',
             [id]
         )
         
