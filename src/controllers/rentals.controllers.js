@@ -84,8 +84,6 @@ export async function completeRent(req, res) {
             'SELECT * FROM rentals WHERE id = $1;', [id]
         )
 
-        console.log(rental.rows[0])
-
         if (!rental.rows.length) return res.sendStatus(404);
         if (rental.rows[0].returnDate !== null) return res.sendStatus(400);
 
@@ -111,6 +109,7 @@ export async function completeRent(req, res) {
 export async function deleteRent(req, res) {
 
     try {
+        res.sendStatus(200);
 
     } catch (err) {
         res.status(500).send(err.message);
