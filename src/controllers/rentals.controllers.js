@@ -96,7 +96,7 @@ export async function completeRent(req, res) {
         await db.query(
             `UPDATE rentals 
             SET "returnDate" = $1,"delayFee" = $2 
-            WHERE id = $3`,
+            WHERE id = $3;`,
             [returnedDate, fee, id]
         )
         res.sendStatus(200);
@@ -107,8 +107,20 @@ export async function completeRent(req, res) {
 
 
 export async function deleteRent(req, res) {
+    const { id } = req.params;
 
     try {
+        const rental = await db.query(
+            'SELECT * FROM rentals WHERE id = $1;', [id]
+        )
+        if (!rental.rows.length) return res.sendStatus(404);
+        if (rental.rows[0].returnDate === null) return res.sendStatus(400);
+        
+        await db.query(
+            `DELETE FROM rentals WHERE id = $1;`
+            [id]
+        )
+        
         res.sendStatus(200);
 
     } catch (err) {
