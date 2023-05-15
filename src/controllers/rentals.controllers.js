@@ -89,12 +89,16 @@ export async function completeRent(req, res) {
 
         const returnedDate = new Date();
         const daysLate = (Math.abs(returnedDate - rental.rows[0].rentDate)) / (1000 * 3600 * 24);
-        let fee = daysLate * rental.rows[0].originalPrice;
+        const fee = daysLate * rental.rows[0].originalPrice;
 
-        if(fee < rental.rows[0].originalPrice) {
-            fee = 0;
+        if(daysLate < 1) {
+            await db.query(
+                'UPDATE rentals SET "returnDate" = $1,"delayFee" = $2 WHERE id = $3;',
+                [returnedDate, null, id]
+            )
+           return res.sendStatus(200);
         }
-    
+        
         await db.query(
             'UPDATE rentals SET "returnDate" = $1,"delayFee" = $2 WHERE id = $3;',
             [returnedDate, fee, id]
