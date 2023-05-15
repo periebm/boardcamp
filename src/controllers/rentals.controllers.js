@@ -38,7 +38,7 @@ export async function insertRent(req, res){
         if (!customer.rows.length) return res.sendStatus(400);
         
         const rentalsStock = await db.query(
-            'SELECT * FROM rentals WHERE "gameId" = $1 AND  "returnDate" = null;', [gameId]
+            'SELECT * FROM rentals WHERE "gameId" = $1 AND "returnDate" IS NULL;', [gameId]
         )
 
         if(rentalsStock.rows.length >= game.rows[0].stockTotal) return res.sendStatus(400);
@@ -48,11 +48,11 @@ export async function insertRent(req, res){
         const originalPrice = game.rows[0].pricePerDay * daysRented;
         const delayFee = null;
         
-        await db.query(
+/*         await db.query(
             `INSERT INTO rentals ("customerId", "gameId", "rentDate", "daysRented", "returnDate", "originalPrice", "delayFee") 
             VALUES ($1, $2, $3, $4, $5, $6, $7);`,
             [customerId, gameId, rentDate, daysRented, returnDate, originalPrice, delayFee]
-        );
+        ); */
 
         res.sendStatus(201);
     } catch (err) {
